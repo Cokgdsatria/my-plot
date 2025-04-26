@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Visualisasi Produksi Beras</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+    <header>
+        <h1>Visualisasi Produksi Beras Dunia (1961 - 2021)</h1>
+        <p>Pilih jenis grafik dan negara untuk melihat data produksi beras.</p>
+    </header>
+
+    <section class="controls">
+        <label for="country-select">Pilih Negara:</label>
+        <select id="country-select"></select>
+
+        <label for="plot-type">Jenis Grafik:</label>
+        <select id="plot-type">
+            <option value="bar">Bar Plot</option>
+            <option value="scatter">Scatter Plot</option>
+            <option value="regression">Regression Plot</option>
+        </select>
+
+        <!-- Tombol refresh -->
+        <button id="update-btn">Tampilkan Grafik</button> 
+    </section>
+
+    <!-- Area untuk menampilkan grafik -->
+    <div id='chart'></div>
+
+<script src="./script.js"></script>
+
+<!-- Library Plotly.js CDN -->
+<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>
+
+</body>
+</html> 

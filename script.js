@@ -182,12 +182,10 @@ async function onUpdateClick(){
 
 }
 
-
 }
 
 
-
-// Global variable menyimpan dataset setelah load CSV sekali saja utk efisiensi akses selanjutnya.
+// Global variable menyimpan dataset setelah load CSV sekali saja utk efisiensi akses selanjutnya
 let dataGlobal=[];
 
 // Inisialisasi halaman setelah DOM siap:

@@ -1,9 +1,8 @@
-
 // Fungsi untuk load CSV menggunakan fetch API
 async function loadCSV() {
-    const response = await fetch('data.csv');
-    const csvText = await response.text();
-    
+	const response = await fetch('data.csv');
+	const csvText = await response.text();
+
 	// Parse CSV sederhana ke array objek
 	const lines = csvText.split('\n').filter(line => line.trim() !== '');
 	const headers = lines[0].split(',');
@@ -19,7 +18,7 @@ async function loadCSV() {
 // Mengisi dropdown negara unik dari dataset
 function populateCountrySelect(data) {
 	const selectEl = document.getElementById('country-select');
-	
+
 	let countriesSet = new Set(data.map(d=>d.Area));
 	countriesSet.forEach(country=>{
 	  let optionEl=document.createElement('option');
@@ -35,16 +34,19 @@ function drawBarPlot(years, values) {
       x : years,
       y : values,
       type : 'bar',
-      marker:{color:'rgb(26,118,255)'}
+      marker:{color:'rgb(255 ,64 ,129)'}
      };
 	
 	let layout={
 	   title:'Produksi Beras per Tahun (Bar Plot)',
 	   xaxis:{title:'Tahun'},
-	   yaxis:{title:'Produksi (tonnes)'}
+	   yaxis:{title:'Produksi (tonnes)', zeroline:false},
+       plot_bgcolor:'#121212',
+       paper_bgcolor:'#121212',
+       font:{color:'#e0e0e0'}
 	};
 	
-	Plotly.newPlot('chart',[trace],layout);
+	Plotly.newPlot('chart',[trace],layout,{responsive:true});
 }
 
 // Membuat Scatter plot biasa tanpa regresi linear dulu
@@ -54,16 +56,19 @@ function drawScatterPlot(years ,values){
        y : values,
        mode :'markers',
        type :'scatter',
-       marker:{color:'rgb(255 ,65 ,54)', size :8}
+       marker:{color:'rgb(130 ,170 ,255)', size :10}
      };
 	 
 	let layout={
 	    title:'Produksi Beras per Tahun (Scatter Plot)',
 	    xaxis:{title:"Tahun"},
-	    yaxis:{title:"Produksi (tonnes)"}
+	    yaxis:{title:"Produksi (tonnes)", zeroline:false},
+	    plot_bgcolor:'#121212',
+	    paper_bgcolor:'#121212',
+	    font:{color:'#e0e0e0'}
      };
 	 
-	Plotly.newPlot('chart',[trace],layout);
+	Plotly.newPlot('chart',[trace],layout,{responsive:true});
 }
 
 // Fungsi regresi linear sederhana pakai least squares method di JS:
@@ -94,48 +99,38 @@ function drawRegressionPlot(years ,values){
 
 	var fitLineYears=[Math.min(...years), Math.max(...years)];
 	var fitLineValues=[
-	     reg.slope * fitLineYears[0] + reg.intercept,
-		 reg.slope * fitLineYears[1] + reg.intercept];
+	     reg.slope * fitLineYears[fitLineYears.indexOf(Math.min(...years))] + reg.intercept,
+		 reg.slope * fitLineYears[fitLineYears.indexOf(Math.max(...years))] + reg.intercept];
 
 	var regressionTrace={
-	     x : fitLineYears,
-		 y : fitLineValues,
-		 mode :'lines',
-		 type :'scatter',
-		 name :"Regresi Linear",
+	     x          : fitLineYears,
+		 y          : fitLineValues,
+		 mode       :'lines',
+		 type       :'scatter',
+		 name       :"Regresi Linear",
          line:{
-           color:"green",
-           width:"3"
+           color:"rgb(80,220,100)",
+           width:"4"
          }
      };
 
-	// Tambahkan garis regresi ke chart yang sudah ada:
-	
 	setTimeout(()=>{
-	    // Ambil chart lama datanya lalu update dengan trace baru garis regresi:
-	    var updateData=[regressionTrace];
-	    var layoutUpdate={};
+	     var currentData=document.getElementById("chart").data || [];
+	     var combinedTraces=currentData.concat([regressionTrace]);
 
-	    // Gunakan extendTraces agar tidak hapus scatter sebelumnya tapi tambah garis baru.
-	    // Namun karena kita buat ulang chart tiap kali klik tombol maka kita buat ulang semua traces sekaligus
-
-	    var currentData=document.getElementById("chart").data || [];
-	    
-	    // Gabungkan scatter & regression line dalam satu array traces baru utk newplot supaya tampil bersamaan.
-	    
-	    var combinedTraces=currentData.concat([regressionTrace]);
-
-	    // Buat ulang chart dg gabungan traces tersebut supaya tampil lengkap.
-	    
 	     let layoutFull={
-	       title:'Produksi Beras per Tahun dengan Regresi Linear',
-	       xaxis:{title:"Tahun"},
-	       yaxis:{title:"Produksi (tonnes)"}
+	       title          :'Produksi Beras per Tahun dengan Regresi Linear',
+	       xaxis          : {title:"Tahun"},
+	       yaxis          : {title:"Produksi (tonnes)", zeroline:false},
+	       plot_bgcolor   : '#121212' ,
+	       paper_bgcolor   : '#121212' ,
+	       font           : {color:'#eaeaea'},
 	     };
 
-	     Plotly.newPlot("chart",combinedTraces ,layoutFull);
-         
-		  },100); 
+	     // Buat ulang chart dg gabungan traces tersebut supaya tampil lengkap.
+	     Plotly.newPlot("chart",combinedTraces ,[layoutFull],{responsive:true});
+
+ },100); 
 
 }
 
@@ -143,10 +138,10 @@ function drawRegressionPlot(years ,values){
 // Event handler saat tombol "Tampilkan Grafik"
 async function onUpdateClick(){
 	const countrySelect=document.getElementById("country-select");
-	const selectedCountry=countrySelect.value;
+	const selectedCountry=countrySelect.value.trim();
 
 	const plotTypeSelect=document.getElementById("plot-type");
-	const selectedType=plotTypeSelect.value;
+	const selectedType=plotTypeSelect.value.trim();
 
 	if(!selectedCountry){
 	  alert("Silakan pilih negara terlebih dahulu.");
@@ -155,10 +150,10 @@ async function onUpdateClick(){
 
 	let filteredData=dataGlobal.filter(d=>d.Area===selectedCountry);
 
-	if(filteredData.length===0){
+	if(filteredData.length===undefined || filteredData.length===null || filteredData.length===false || filteredData.length === ""){
 	  alert(`Tidak ada data untuk ${selectedCountry}`);
 	  return ;
-	}
+	}  
 
 	let years=[];
 	let production=[];
@@ -182,7 +177,7 @@ async function onUpdateClick(){
           break ; 		  
 	default :
           alert("Jenis grafik tidak dikenali.");
-          break ;		  
+          break ;
 
 
 }

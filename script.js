@@ -110,7 +110,7 @@ function drawRegressionPlot(years, values) {
         name: "Regresi Linear",
         line: {
             color: "rgb(80,220,100)",
-            width: "4"
+            width: 4
         }
     };
 
@@ -124,14 +124,13 @@ function drawRegressionPlot(years, values) {
             yaxis: {title: "Produksi (tonnes)", zeroline: false},
             plot_bgcolor: '#121212',
             paper_bgcolor: '#121212',
-            font: {color: '#eaeaea'},
+            font: {color: '#e0e0e0'},
         };
 
-        // Buat ulang chart dg gabungan traces tersebut supaya tampil lengkap.
-        Plotly.newPlot("chart", combinedTraces, [layoutFull], {responsive: true});
+        // Buat ulang chart dengan gabungan traces tersebut supaya tampil lengkap.
+        Plotly.newPlot("chart", combinedTraces, layoutFull, {responsive: true});
 
     }, 100);
-
 }
 
 
@@ -191,6 +190,19 @@ let dataGlobal = [];
 
 // Inisialisasi halaman setelah DOM siap:
 // Load CSV -> isi dropdown -> pasang event listener tombol
+
+document.addEventListener('DOMContentLoaded', () => {
+    const updateButton = document.getElementById('update-btn');
+    const countrySelect = document.getElementById('country-select');
+    const plotTypeSelect = document.getElementById('plot-type');
+
+    const triggerUpdate = () => {
+        updateButton.click();
+    };
+
+    countrySelect.addEventListener('change', triggerUpdate);
+    plotTypeSelect.addEventListener('change', triggerUpdate);
+});
 
 document.addEventListener('DOMContentLoaded', async () => {
     dataGlobal = await loadCSV();

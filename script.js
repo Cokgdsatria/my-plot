@@ -56,7 +56,7 @@ function drawScatterPlot(years, values) {
         y: values,
         mode: 'markers',
         type: 'scatter',
-        marker: {color: 'rgb(130 ,170 ,255)', size: 10}
+        marker: {color: 'rgb(255 ,64 ,129)', size: 10}
     };
 
     let layout = {
@@ -109,7 +109,7 @@ function drawRegressionPlot(years, values) {
         type: 'scatter',
         name: "Regresi Linear",
         line: {
-            color: "rgb(80,220,100)",
+            color: "rgb(255,255,255)",
             width: 4
         }
     };
